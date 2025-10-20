@@ -1,14 +1,11 @@
 from fastapi import APIRouter
-import datetime
 
-router = APIRouter(prefix="/common", tags=["common"])
+router = APIRouter(prefix="/api", tags=["Common"])
 
+@router.get("/")
+async def root():
+    return {"message": "Hello from FastAPI Library API!"}
 
-@router.get("/healthcheck")
-def healthcheck():
-    return {"status": "ok", "message": "Service is running"}
-
-
-@router.get("/time")
-def get_time():
-    return {"server_time": datetime.datetime.now().isoformat()}
+@router.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "Library API"}
