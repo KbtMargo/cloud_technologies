@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 
 class AzureConfig:
-    """Configuration class for connecting to Azure Blob Storage."""
 
     def __init__(self):
         load_dotenv()
@@ -15,7 +14,6 @@ class AzureConfig:
 
     @property
     def blob_service_client(self):
-        """Initialize and return the Azure BlobServiceClient."""
         if not self._blob_service_client:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 self.connection_string
@@ -24,7 +22,6 @@ class AzureConfig:
 
     @property
     def container_client(self):
-        """Return the client for an existing container."""
         if not self._container_client:
             self._container_client = self.blob_service_client.get_container_client(
                 self.container_name
