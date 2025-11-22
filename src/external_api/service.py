@@ -5,8 +5,7 @@ from src.external_api.config import dog_config as cfg
 
 class DogApiService:
     """
-    Сервіс для роботи *тільки* з https://dog.ceo/dog-api/
-    Слідує стилю CatService.
+    Сервіс для роботи тільки з https://dog.ceo/dog-api/
     """
     def __init__(self):
         self.base_url = cfg.base_url

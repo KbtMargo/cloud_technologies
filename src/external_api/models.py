@@ -11,7 +11,7 @@ class BaseDogResponse(BaseModel):
 
 class DogImageResponse(BaseModel):
     """ 
-    Відповідь, що містить URL зображення.
+    Відповідь, що містить URL зображення.   
     Відповідає /breeds/image/random
     """
     message: HttpUrl = Field(

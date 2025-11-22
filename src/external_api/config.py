@@ -2,10 +2,7 @@ from dataclasses import dataclass
 
 @dataclass
 class DogConfig:
-    """
-    Конфігурація ТІЛЬКИ для dog.ceo API.
-    Слідує стилю прикладу cat_config.
-    """
+
     base_url: str = "https://dog.ceo/api"
     
     min_url_length: int = 10
