@@ -1,7 +1,10 @@
-import requests
+import httpx
 from typing import Optional
 from src.external_api.models import DogImageResponse, DogBreedListResponse
 from src.external_api.config import dog_config as cfg
+from src.core.cache import cache_get, cache_set
+from src.settings import settings
+
 
 class DogApiService:
     """
@@ -9,15 +12,16 @@ class DogApiService:
     """
     def __init__(self):
         self.base_url = cfg.base_url
+        self.client = httpx.AsyncClient(timeout=10.0)
 
-    def _make_request(self, endpoint: str) -> dict:
+    async def _make_request(self, endpoint: str) -> dict:
         """ 
-        Допоміжний метод для виконання запитів.
+        Асинхронний метод для виконання запитів.
         Кидає RuntimeError, якщо запит не вдався.
         """
         full_url = f"{self.base_url}/{endpoint}"
         try:
-            response = requests.get(full_url, timeout=10)
+            response = await self.client.get(full_url)
             response.raise_for_status() 
             data = response.json()
             
@@ -26,28 +30,60 @@ class DogApiService:
             
             return data
         
-        except requests.exceptions.HTTPError as http_err:
-            raise RuntimeError(f"API error: {http_err.response.text}")
-        except requests.exceptions.RequestException as err:
-            raise RuntimeError(f"Network request failed: {err}")
+        except httpx.HTTPError as http_err:
+            raise RuntimeError(f"API error: {str(http_err)}")
+        except Exception as err:
+            raise RuntimeError(f"Request failed: {err}")
 
-    def get_random_image(self) -> DogImageResponse:
+    async def get_random_image(self) -> DogImageResponse:
         """ Отримує випадкове зображення собаки """
-        data = self._make_request("breeds/image/random")
+        cache_key = "cache:external:dog_random"
+        
+        cached = await cache_get(cache_key)
+        if cached:
+            return DogImageResponse.model_validate(cached)
+        
+        data = await self._make_request("breeds/image/random")
+        
+        await cache_set(cache_key, data, settings.redis_TTL)
+        
         return DogImageResponse.model_validate(data)
 
-    def get_image_by_breed(self, breed: str) -> Optional[DogImageResponse]:
+    async def get_image_by_breed(self, breed: str) -> Optional[DogImageResponse]:
         """ Отримує випадкове зображення за породою """
+        cache_key = f"cache:external:dog_breed:{breed.lower()}"
+        
+        cached = await cache_get(cache_key)
+        if cached:
+            return DogImageResponse.model_validate(cached)
+        
         try:
             breed_clean = breed.strip().lower().replace(" ", "/")
-            data = self._make_request(f"breed/{breed_clean}/images/random")
+            data = await self._make_request(f"breed/{breed_clean}/images/random")
+            
+            await cache_set(cache_key, data, settings.redis_TTL)
+            
             return DogImageResponse.model_validate(data)
         except RuntimeError:
             return None
 
-    def get_all_breeds(self) -> DogBreedListResponse:
+    async def get_all_breeds(self) -> DogBreedListResponse:
         """ Отримує список усіх порід та під-порід """
-        data = self._make_request("breeds/list/all")
+        cache_key = "cache:external:dog_breeds"
+        
+        cached = await cache_get(cache_key)
+        if cached:
+            return DogBreedListResponse.model_validate(cached)
+        
+        data = await self._make_request("breeds/list/all")
+        
+        await cache_set(cache_key, data, settings.redis_TTL)
+        
         return DogBreedListResponse.model_validate(data)
     
+    async def close(self):
+        """ Закрити клієнт """
+        await self.client.aclose()
+
+
 service = DogApiService()

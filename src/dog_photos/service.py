@@ -17,14 +17,14 @@ class DogPhotoService:
         repo = DogPhotoRepository(db)
 
         if breed:
-            img = dog_api_service.get_image_by_breed(breed)
+            img = await dog_api_service.get_image_by_breed(breed)
             if img is None:
                 raise ValueError(f"Breed '{breed}' not found.")
             image_url = str(img.message)
             normalized_breed = breed.strip().lower()
             sub_breed = None
         else:
-            img = dog_api_service.get_random_image()
+            img = await dog_api_service.get_random_image()
             image_url = str(img.message)
             normalized_breed = None
             sub_breed = None
