@@ -26,13 +26,13 @@ jobs:
           pip install black isort flake8
 
       - name: Run Black (check)
-        run: black --check .
+        run: black --check src
 
       - name: Run isort (check)
-        run: isort --profile black --check-only .
+        run: isort --profile black --check-only src
 
       - name: Run flake8
-        run: flake8 --exclude=venv,env,migrations
+        run: flake8 src
 
   # test job
   tests:
