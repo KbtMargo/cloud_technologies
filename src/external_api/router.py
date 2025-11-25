@@ -12,9 +12,6 @@ router = APIRouter(prefix="/external", tags=["External API (Dogs)"])
 
 @router.get("/dog/random-image", response_model=DogImageResponse, summary="Випадкове зображення собаки")
 async def get_random_dog_image():
-    """
-    Повертає одне випадкове зображення собаки.
-    """
     try:
         return await service.get_random_image()
     except Exception as e:
@@ -27,9 +24,6 @@ async def get_random_dog_image():
 async def get_dog_image_by_breed(
     breed_name: str = Path(..., description="Назва породи (н-д, 'hound', 'pug', 'retriever')")
 ):
-    """
-    Повертає одне випадкове зображення собаки за вказаною породою.
-    """
     try:
         item = await service.get_image_by_breed(breed_name)
         if item is None:
@@ -43,9 +37,6 @@ async def get_dog_image_by_breed(
 
 @router.get("/dog/breeds", response_model=DogBreedListResponse, summary="Список усіх порід")
 async def get_all_breeds():
-    """
-    Повертає повний список усіх порід та їхніх під-порід.
-    """
     try:
         return await service.get_all_breeds()
     except Exception as e:
@@ -56,26 +47,24 @@ async def get_all_breeds():
 async def get_random_dog_html(
     breed: Optional[str] = Query(None, description="Опціонально: фільтр за породою (н-д, 'beagle')")
 ):
-    """
-    Повертає просту HTML-сторінку з випадковим зображенням.
-    """
     try:
-        image_url: HttpUrl
         if breed:
             item = await service.get_image_by_breed(breed)
-            title = f"Random {breed.capitalize()}"
             if item is None:
                 raise HTTPException(status_code=404, detail=f"Breed '{breed}' not found.")
+            title = f"Random {breed.capitalize()}"
         else:
             item = await service.get_random_image()
             title = "Random Dog"
+
+        image_url: HttpUrl = item.message
 
         return f"""
         <html>
             <head><title>{title}</title></head>
             <body style="font-family:Arial; text-align:center; padding-top: 20px; background-color: #f4f4f4;">
                 <h2>{title}</h2>
-                <img src="{image_url}" alt="{title}" style="max-width:90%; max-height: 80vh; border-radius:10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <img src="{image_url}" alt="{title}>
             </body>
         </html>
         """
