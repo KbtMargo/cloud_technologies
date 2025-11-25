@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.base import get_db_session
-from src.dog_photos.schema import DogPhotoWithStats, DogPhotoRead
+from src.dog_photos.schema import DogPhotoRead, DogPhotoWithStats
 from src.dog_photos.service import dog_photo_service
 
 router = APIRouter(prefix="/dog-photos", tags=["Dog Photos"])
@@ -16,9 +16,7 @@ router = APIRouter(prefix="/dog-photos", tags=["Dog Photos"])
     summary="Отримати випадкове зображення з Dog API та зберегти в БД",
 )
 async def save_dog_photo(
-    breed: Optional[str] = Query(
-        None, description="Опціональна порода (наприклад 'beagle')"
-    ),
+    breed: Optional[str] = Query(None, description="Опціональна порода (наприклад 'beagle')"),
     db: AsyncSession = Depends(get_db_session),
 ):
     try:

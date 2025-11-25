@@ -8,6 +8,7 @@ from src.database.base import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
 
+
 class BaseRepository(Generic[ModelType]):
     """Generic CRUD repository for SQLAlchemy ORM models."""
 
@@ -78,7 +79,6 @@ class BaseRepository(Generic[ModelType]):
             stmt = delete(self.model).where(self.model.id == obj_id)
             await self.session.execute(stmt)
             await self.session.commit()
-
 
         except Exception as e:
             await self.session.rollback()

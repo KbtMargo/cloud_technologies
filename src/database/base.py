@@ -1,13 +1,15 @@
+from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
-from sqlalchemy import text
 
 from src.settings import settings
 
+
 class Base(DeclarativeBase):
     pass
+
 
 DATABASE_URL: str = settings.db_async
 
@@ -24,9 +26,11 @@ db_session_factory = async_sessionmaker(
     expire_on_commit=False,
 )
 
+
 async def get_db_session():
     async with db_session_factory() as session:
         yield session
+
 
 async def _init_citext(conn):
     """Initialize PostgreSQL CITEXT extension if supported."""
@@ -49,6 +53,7 @@ async def _init_db_models():
         pass
     except Exception as error:
         print(f"DB init error: {error}")
+
 
 async def _init_citext(conn):
     """Initialize PostgreSQL CITEXT extension if supported."""

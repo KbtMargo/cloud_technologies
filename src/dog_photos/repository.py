@@ -45,11 +45,7 @@ class DogPhotoRepository(BaseRepository[DogPhoto]):
             raise
 
     async def list_photos(self, limit: int = 50) -> Sequence[DogPhoto]:
-        stmt = (
-            select(DogPhoto)
-            .order_by(DogPhoto.created_at.desc())
-            .limit(limit)
-        )
+        stmt = select(DogPhoto).order_by(DogPhoto.created_at.desc()).limit(limit)
         res = await self.session.execute(stmt)
         return res.scalars().unique().all()
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, HttpUrl, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 from src.database.base_schema import BaseOutModel
 from src.dog_photos.config import dog_photo_config as cfg
@@ -31,11 +31,13 @@ class DogPhotoBase(BaseModel):
 
 class DogPhotoCreate(DogPhotoBase):
     """DTO для створення запису (використовується всередині сервісу)."""
+
     pass
 
 
 class DogPhotoRead(DogPhotoBase, BaseOutModel):
     """Зображення з БД без статистики."""
+
     pass
 
 

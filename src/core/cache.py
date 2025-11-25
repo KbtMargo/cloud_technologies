@@ -1,6 +1,8 @@
 import json
 from typing import Any, Optional
+
 from src.core.redis_client import get_redis
+
 
 async def cache_set(key: str, value: Any, ttl: int | None = None) -> None:
     """Set value in Redis cache with optional TTL."""
@@ -14,6 +16,7 @@ async def cache_set(key: str, value: Any, ttl: int | None = None) -> None:
     except Exception as e:
         raise e
 
+
 async def cache_get(key: str) -> Optional[Any]:
     """Get value from Redis cache."""
     redis = await get_redis()
@@ -26,6 +29,7 @@ async def cache_get(key: str) -> Optional[Any]:
     except Exception as e:
         return None
 
+
 async def cache_exists(key: str) -> bool:
     """Check if key exists in Redis cache."""
     redis = await get_redis()
@@ -35,6 +39,7 @@ async def cache_exists(key: str) -> bool:
         return exists
     except Exception as e:
         return False
+
 
 async def cache_delete(key: str) -> bool:
     """Delete key from Redis cache."""

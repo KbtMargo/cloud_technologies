@@ -30,6 +30,6 @@ class BaseOutModel(BaseModel):
 
     id: int
     created_at: datetime.datetime
-    updated_at: Optional[datetime.datetime] = None  
+    updated_at: Optional[datetime.datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

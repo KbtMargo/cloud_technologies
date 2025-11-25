@@ -1,12 +1,14 @@
 from datetime import datetime
 from typing import Optional, Sequence
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.dog_photos.models import DogPhoto, DogPhotoStats
 from src.dog_photos.repository import DogPhotoRepository
 from src.external_api.service import service as dog_api_service
+
 
 class DogPhotoService:
     async def save_random_photo(
@@ -29,28 +31,19 @@ class DogPhotoService:
             normalized_breed = None
             sub_breed = None
 
-        photo = DogPhoto(
-            image_url=image_url,
-            breed=normalized_breed,
-            sub_breed=sub_breed,
-            created_at=datetime.now() 
-        )
+        photo = DogPhoto(image_url=image_url, breed=normalized_breed, sub_breed=sub_breed, created_at=datetime.now())
         db.add(photo)
         await db.commit()
         await db.refresh(photo)
-        
+
         stats = DogPhotoStats(photo_id=photo.id)
         db.add(stats)
         await db.commit()
-        
-        stmt = (
-            select(DogPhoto)
-            .where(DogPhoto.id == photo.id)
-            .options(selectinload(DogPhoto.stats))
-        )
+
+        stmt = select(DogPhoto).where(DogPhoto.id == photo.id).options(selectinload(DogPhoto.stats))
         result = await db.execute(stmt)
         photo_with_stats = result.scalar_one()
-        
+
         return photo_with_stats
 
     async def list_photos(self, db: AsyncSession, limit: int = 50) -> Sequence[DogPhoto]:
@@ -73,4 +66,5 @@ class DogPhotoService:
 
         return photo
 
-dog_photo_service = DogPhotoService()   
+
+dog_photo_service = DogPhotoService()
