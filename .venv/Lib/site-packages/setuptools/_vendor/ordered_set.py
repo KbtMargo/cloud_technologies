@@ -32,11 +32,7 @@ def is_iterable(obj):
     We don't need to check for the Python 2 `unicode` type, because it doesn't
     have an `__iter__` attribute anyway.
     """
-    return (
-        hasattr(obj, "__iter__")
-        and not isinstance(obj, str)
-        and not isinstance(obj, tuple)
-    )
+    return hasattr(obj, "__iter__") and not isinstance(obj, str) and not isinstance(obj, tuple)
 
 
 class OrderedSet(MutableSet, Sequence):
@@ -180,9 +176,7 @@ class OrderedSet(MutableSet, Sequence):
             for item in sequence:
                 item_index = self.add(item)
         except TypeError:
-            raise ValueError(
-                "Argument needs to be an iterable, got %s" % type(sequence)
-            )
+            raise ValueError("Argument needs to be an iterable, got %s" % type(sequence))
         return item_index
 
     def index(self, key):
@@ -483,6 +477,4 @@ class OrderedSet(MutableSet, Sequence):
         """
         items_to_add = [item for item in other if item not in self]
         items_to_remove = set(other)
-        self._update_items(
-            [item for item in self.items if item not in items_to_remove] + items_to_add
-        )
+        self._update_items([item for item in self.items if item not in items_to_remove] + items_to_add)

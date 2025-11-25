@@ -7,3 +7,6 @@ __pycache__/
 *.sqlite3
 .env
 src/settings.py
+.coverage
+coverage.xml
+htmlcov/

@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 
 class AzureConfig:
-
     def __init__(self):
         load_dotenv()
         self.connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")

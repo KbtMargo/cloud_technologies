@@ -12,14 +12,10 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> Respon
     headers = getattr(exc, "headers", None)
     if not is_body_allowed_for_status_code(exc.status_code):
         return Response(status_code=exc.status_code, headers=headers)
-    return JSONResponse(
-        {"detail": exc.detail}, status_code=exc.status_code, headers=headers
-    )
+    return JSONResponse({"detail": exc.detail}, status_code=exc.status_code, headers=headers)
 
 
-async def request_validation_exception_handler(
-    request: Request, exc: RequestValidationError
-) -> JSONResponse:
+async def request_validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(
         status_code=422,
         content={"detail": jsonable_encoder(exc.errors())},
@@ -29,6 +25,4 @@ async def request_validation_exception_handler(
 async def websocket_request_validation_exception_handler(
     websocket: WebSocket, exc: WebSocketRequestValidationError
 ) -> None:
-    await websocket.close(
-        code=WS_1008_POLICY_VIOLATION, reason=jsonable_encoder(exc.errors())
-    )
+    await websocket.close(code=WS_1008_POLICY_VIOLATION, reason=jsonable_encoder(exc.errors()))

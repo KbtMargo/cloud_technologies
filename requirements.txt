@@ -18,3 +18,4 @@ requests
 azure-storage-blob
 python-dotenv
 python-multipart
+sentry-sdk
